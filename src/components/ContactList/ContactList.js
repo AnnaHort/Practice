@@ -43,7 +43,7 @@ export const ContactList = ({ item }) => {
           items.map(contact => (
             <ListEl key={contact.id}>
               <p>{contact.name}</p>
-              <p>{contact.email}</p>
+              <p>{contact.phone}</p>
               <ContactButton onClick={() => handleDelete(contact)}>Delete</ContactButton>
             </ListEl>
           ))

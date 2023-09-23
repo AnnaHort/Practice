@@ -29,11 +29,15 @@ const contactSlice = createSlice({
     [addTask.pending](state) {
       state.contacts.isLoading = true;
     },
+
+    
     [addTask.fulfilled](state, action) {
       state.contacts.isLoading = false;
       state.contacts.error = null;
       state.contacts.items.push(action.payload);
     },
+    
+
     [addTask.rejected](state, action) {
       state.contacts.isLoading = false;
       state.contacts.error = action.payload;
