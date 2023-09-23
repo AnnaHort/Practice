@@ -1,30 +1,28 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { ContactButton, ListContact, ListEl, StyledSearchInput } from './ContactList.styled';
-import { deleteContact, findContact } from 'redux/contactSlice';
-import { contactSelector, filterSelector } from 'redux/selectors';
+import {
+  ContactButton,
+  ListContact,
+  ListEl,
+  StyledSearchInput,
+} from './ContactList.styled';
+import { useEffect } from 'react';
+import { fetchTasks } from 'redux/operations';
+import { getTasks } from 'redux/selectors';
+ 
 
 export const ContactList = () => {
-  const contacts = useSelector(contactSelector);
-  const filter = useSelector(filterSelector);
 
   const dispatch = useDispatch();
 
-  const handleDelete = contactId => {
-    dispatch(deleteContact(contactId));
-  };
+  // отримуємо частини стану
+  const { items, isLoading, error } = useSelector(getTasks);
 
+  // Викликаємо операцію
+  useEffect(() => {
+    dispatch(fetchTasks());
+  }, [dispatch]);
 
-  const handleChange = e => {
-    const inputValue = e.target.value;
-    dispatch(findContact(inputValue));
-
-    if (filter && filter !== '') {
-      contacts.filter(contact =>
-        contact.name.toLowerCase().includes(inputValue.toLowerCase())
-      );
-    }
-  };
-
+   // Рендерим розмітку в залежності від значень у стані
   return (
     <>
       <h2>Contacts</h2>
@@ -32,20 +30,21 @@ export const ContactList = () => {
         type="text"
         name="filter"
         placeholder="Search by name"
-        onChange={handleChange}
       />
       <ListContact>
-        {contacts
-          .filter(contact =>
-            contact.name.toLowerCase().includes(filter.toLowerCase())
-          )
-          .map(contact => (
+        {isLoading ? (
+          <p>Loading...</p>
+        ) : error ? (
+          <p>Error: {error.message}</p>
+        ) : (
+          items.map((contact) => (
             <ListEl key={contact.id}>
-              <p>{contact.name}:</p>
-              <p> {contact.phoneNumber}</p>
-              <ContactButton onClick={() => handleDelete(contact.id)}>Delete</ContactButton>
+              <p>{contact.name}</p>
+              <p>{contact.email}</p>
+              <ContactButton>Delete</ContactButton>
             </ListEl>
-          ))}
+          ))
+        )}
       </ListContact>
     </>
   );
