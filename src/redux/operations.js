@@ -19,4 +19,27 @@ export const fetchTasks = createAsyncThunk(
     }
   }
 );
-
+// додавання 
+export const addTask = createAsyncThunk(
+  'contacts/addContact',
+  async (text, thunkAPI) => {
+    try {
+      const response = await axios.post('/contacts/contacts', { text });
+      return response.data;
+    } catch (e) {
+      return thunkAPI.rejectWithValue(e.message);
+    }
+  }
+);
+// видалення
+export const deleteTask = createAsyncThunk(
+  'contacts/deleteContact',
+  async(taskId, thunkAPI) => {
+    try {
+      const response = await axios.delete(`/contacts/contacts/${taskId}`);
+      return response.data;
+    } catch (e) {
+      return thunkAPI.rejectWithValue(e.message);
+    }
+  }
+)

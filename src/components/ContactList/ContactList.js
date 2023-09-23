@@ -6,12 +6,10 @@ import {
   StyledSearchInput,
 } from './ContactList.styled';
 import { useEffect } from 'react';
-import { fetchTasks } from 'redux/operations';
+import { deleteTask, fetchTasks } from 'redux/operations';
 import { getTasks } from 'redux/selectors';
- 
 
-export const ContactList = () => {
-
+export const ContactList = ({ item }) => {
   const dispatch = useDispatch();
 
   // отримуємо частини стану
@@ -22,7 +20,12 @@ export const ContactList = () => {
     dispatch(fetchTasks());
   }, [dispatch]);
 
-   // Рендерим розмітку в залежності від значень у стані
+  // операція видалення
+  const handleDelete = item => {
+    dispatch(deleteTask(item.id));
+  };
+
+  // Рендерим розмітку в залежності від значень у стані
   return (
     <>
       <h2>Contacts</h2>
@@ -37,11 +40,11 @@ export const ContactList = () => {
         ) : error ? (
           <p>Error: {error.message}</p>
         ) : (
-          items.map((contact) => (
+          items.map(contact => (
             <ListEl key={contact.id}>
               <p>{contact.name}</p>
               <p>{contact.email}</p>
-              <ContactButton>Delete</ContactButton>
+              <ContactButton onClick={() => handleDelete(contact)}>Delete</ContactButton>
             </ListEl>
           ))
         )}
