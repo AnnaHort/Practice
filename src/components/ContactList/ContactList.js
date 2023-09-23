@@ -7,12 +7,14 @@ import {
 } from './ContactList.styled';
 import { useEffect } from 'react';
 import { deleteTask, fetchTasks } from 'redux/operations';
-import { getTasks } from 'redux/selectors';
+import { getTasks, selectFilter } from 'redux/selectors';
+import { findContact } from 'redux/contactSlice';
 
 export const ContactList = ({ item }) => {
   const dispatch = useDispatch();
+  const filter = useSelector(selectFilter);
 
-  // отримуємо частини стану
+  // Отримуємо частини стану
   const { items, isLoading, error } = useSelector(getTasks);
 
   // Викликаємо операцію
@@ -20,12 +22,17 @@ export const ContactList = ({ item }) => {
     dispatch(fetchTasks());
   }, [dispatch]);
 
-  // операція видалення
+  // Операція видалення
   const handleDelete = item => {
     dispatch(deleteTask(item.id));
   };
 
-  // Рендерим розмітку в залежності від значень у стані
+  // Фільтрація контактів
+  const filteredItems = items.filter(contact =>
+    contact.name.toLowerCase().includes(filter.toLowerCase())
+  );
+
+
   return (
     <>
       <h2>Contacts</h2>
@@ -33,6 +40,8 @@ export const ContactList = ({ item }) => {
         type="text"
         name="filter"
         placeholder="Search by name"
+        value={filter}
+        onChange={e => dispatch(findContact(e.target.value))}
       />
       <ListContact>
         {isLoading ? (
@@ -40,11 +49,13 @@ export const ContactList = ({ item }) => {
         ) : error ? (
           <p>Error: {error.message}</p>
         ) : (
-          items.map(contact => (
+          filteredItems.map(contact => (
             <ListEl key={contact.id}>
               <p>{contact.name}</p>
               <p>{contact.phone}</p>
-              <ContactButton onClick={() => handleDelete(contact)}>Delete</ContactButton>
+              <ContactButton onClick={() => handleDelete(contact)}>
+                Delete
+              </ContactButton>
             </ListEl>
           ))
         )}
@@ -52,3 +63,4 @@ export const ContactList = ({ item }) => {
     </>
   );
 };
+

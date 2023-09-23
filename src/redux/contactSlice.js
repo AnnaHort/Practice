@@ -13,6 +13,11 @@ const initialState = {
 const contactSlice = createSlice({
   name: 'contacts',
   initialState: initialState,
+  reducers: {
+    findContact(state, action) {
+      state.filter = action.payload;
+    },
+  },
   extraReducers: {
     [fetchTasks.pending](state) {
       state.contacts.isLoading = true;
@@ -29,15 +34,11 @@ const contactSlice = createSlice({
     [addTask.pending](state) {
       state.contacts.isLoading = true;
     },
-
-    
     [addTask.fulfilled](state, action) {
       state.contacts.isLoading = false;
       state.contacts.error = null;
       state.contacts.items.push(action.payload);
     },
-    
-
     [addTask.rejected](state, action) {
       state.contacts.isLoading = false;
       state.contacts.error = action.payload;
@@ -61,4 +62,6 @@ const contactSlice = createSlice({
   },
 });
 
-export const contactsReducer = contactSlice.reducer;
+// export const contactsReducer = contactSlice.reducer;
+export const { reducer: contactsReducer, actions } = contactSlice;
+export const { findContact } = actions;
